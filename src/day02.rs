@@ -1,13 +1,11 @@
-#[cfg(windows)]
-const LINE_ENDING: &'static str = "\r\n";
-#[cfg(not(windows))]
-const LINE_ENDING: &'static str = "\n";
+use crate::helpers::split_into_lines;
 
 pub fn day02(input_lines: &str) -> (String, String) {
+    let lines = split_into_lines(input_lines);
     // A, X = Rock
     // B, Y = Paper
     // C, Z = Scissors
-    let answer1: i32 = input_lines.split(LINE_ENDING).map(|p| match p {
+    let answer1: i32 = lines.iter().map(|p| match p.as_str() {
         "A X" => 4, // 1 + 3 (Rock + Draw)
         "A Y" => 8, // 2 + 6 (Paper + Win)
         "A Z" => 3, // 3 + 0 (Scissors + Lose)
@@ -23,7 +21,7 @@ pub fn day02(input_lines: &str) -> (String, String) {
     // X = Lose
     // Y = Draw
     // Z = Win
-    let answer2: i32 = input_lines.split(LINE_ENDING).map(|p| match p {
+    let answer2: i32 = lines.iter().map(|p| match p.as_str() {
         "A X" => 3, // 3 + 0
         "A Y" => 4, // 1 + 3
         "A Z" => 8, // 2 + 6
@@ -45,16 +43,22 @@ mod tests {
 
     #[test]
     fn check_day02_part1_case1() {
-        assert_eq!(day02("A Y\r\nB X\r\nC Z").0, "15".to_string())
+        assert_eq!(day02("A Y
+B X
+C Z").0, "15".to_string())
     }
 
     #[test]
     fn check_day02_part2_case1() {
-        assert_eq!(day02("A Y\r\nB X\r\nC Z").1, "12".to_string())
+        assert_eq!(day02("A Y
+B X
+C Z").1, "12".to_string())
     }
 
     #[test]
     fn check_day02_both_case1() {
-        assert_eq!(day02("A Y\r\nB X\r\nC Z"), ("15".to_string(), "12".to_string()))
+        assert_eq!(day02("A Y
+B X
+C Z"), ("15".to_string(), "12".to_string()))
     }
 }
