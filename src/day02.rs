@@ -41,24 +41,22 @@ pub fn day02(input_lines: &str) -> (String, String) {
 mod tests {
     use super::*;
 
+    const TEST_INPUT: &str = "A Y
+B X
+C Z";
+
     #[test]
     fn check_day02_part1_case1() {
-        assert_eq!(day02("A Y
-B X
-C Z").0, "15".to_string())
+        assert_eq!(day02(TEST_INPUT).0, "15".to_string())
     }
 
     #[test]
     fn check_day02_part2_case1() {
-        assert_eq!(day02("A Y
-B X
-C Z").1, "12".to_string())
+        assert_eq!(day02(TEST_INPUT).1, "12".to_string())
     }
 
     #[test]
     fn check_day02_both_case1() {
-        assert_eq!(day02("A Y
-B X
-C Z"), ("15".to_string(), "12".to_string()))
+        assert_eq!(day02(TEST_INPUT), ("15".to_string(), "12".to_string()))
     }
 }
