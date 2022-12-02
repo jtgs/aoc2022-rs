@@ -37,10 +37,11 @@ use crate::helpers::split_into_lines;
 //     (format!("{}", answer1), format!("{}", answer2))
 // }
 
+#[derive(Eq,PartialEq,Ord,PartialOrd,Clone,Copy)]
 enum RPS {
-    Rock,
-    Paper,
-    Scissors
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3
 }
 
 enum Result {
@@ -58,22 +59,14 @@ fn score_for_type(input: &RPS) -> i32 {
 }
 
 fn play_rps(tuple: &(RPS, RPS)) -> Result {
-    match tuple.1 {
-        RPS::Rock => match tuple.0 {
-            RPS::Rock => Result::Draw,
-            RPS::Paper => Result::Lose,
-            RPS::Scissors => Result::Win
-        },
-        RPS::Paper => match tuple.0 {
-            RPS::Rock => Result::Win,
-            RPS::Paper => Result::Draw,
-            RPS::Scissors => Result::Lose
-        },
-        RPS::Scissors => match tuple.0 {
-            RPS::Rock => Result::Lose,
-            RPS::Paper => Result::Win,
-            RPS::Scissors => Result::Draw
-        },
+    // There must be some significance to these numbers but I don't know what
+    match tuple.1 as i32 - tuple.0 as i32 {
+        -2 => Result::Win,
+        -1 => Result::Lose,
+        0 => Result::Draw,
+        1 => Result::Win,
+        2 => Result::Lose,
+        _ => panic!("unexpected result!")
     }
 }
 
@@ -164,18 +157,18 @@ C Z";
     #[test]
     fn check_day02_part1_case1() {
         assert_eq!(day02(TEST_INPUT).0, "15".to_string());
-        assert_eq!(day02_alt(TEST_INPUT).0, "15".to_string());
+        // assert_eq!(day02_alt(TEST_INPUT).0, "15".to_string());
     }
 
     #[test]
     fn check_day02_part2_case1() {
         assert_eq!(day02(TEST_INPUT).1, "12".to_string());
-        assert_eq!(day02_alt(TEST_INPUT).1, "12".to_string());
+        // assert_eq!(day02_alt(TEST_INPUT).1, "12".to_string());
     }
 
     #[test]
     fn check_day02_both_case1() {
         assert_eq!(day02(TEST_INPUT), ("15".to_string(), "12".to_string()));
-        assert_eq!(day02_alt(TEST_INPUT), ("15".to_string(), "12".to_string()));
+        // assert_eq!(day02_alt(TEST_INPUT), ("15".to_string(), "12".to_string()));
     }
 }
