@@ -138,9 +138,7 @@ pub fn day02(input_lines: &str) -> (String, String) {
             };
             (theirs, mine)
             })
-        .map(|tuple| {
-            score_for_type(&what_to_play(&tuple)) + points_for_result(&tuple.1)
-        })
+        .map(|tuple| score_for_type(&what_to_play(&tuple)) + points_for_result(&tuple.1))
         .sum();
     
     (format!("{}", answer1), format!("{}", answer2))
