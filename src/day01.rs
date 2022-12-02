@@ -8,14 +8,15 @@ pub fn day01(input_lines: &str) -> (String, String) {
     let double_line_break = format!("{}{}", LINE_ENDING, LINE_ENDING);
     let elves = input_lines.split(&double_line_break);
     // Sum up each elf's individual total
-    let elf_totals: Vec<i32> = elves.map(|e| e.split(LINE_ENDING).map(|x| x.trim().parse::<i32>().unwrap()).sum()).collect();
+    let mut elf_totals: Vec<i32> = elves.map(|e| e.split(LINE_ENDING).map(|x| x.trim().parse::<i32>().unwrap()).sum()).collect();
+    elf_totals.sort();
+    elf_totals.reverse();
+    let top_three = &elf_totals[0..3];
 
     // Part 1: find the elf with the biggest calorie count
-    let answer1 = elf_totals.iter().max().unwrap();
+    let answer1 = top_three[0];
     // Part 2: find the total carried by the top three elves
-    let mut sorted = elf_totals.clone();
-    sorted.sort();
-    let answer2: i32 = sorted.iter().rev().take(3).sum();
+    let answer2: i32 = top_three.iter().sum();
     (format!("{}", answer1), format!("{}", answer2))
 }
 
