@@ -58,27 +58,26 @@ pub fn day05(input_lines: &str) -> (String, String) {
 
     // Parse out the steps - use the FromStr implementation above
     let steps_raw = parts.next().unwrap();
-    let steps: Vec<Step> = steps_raw.iter().map(|s| Step::from_str(&*s).unwrap()).collect();
+    let steps = steps_raw.iter().map(|s| Step::from_str(&*s).unwrap());
 
     // Finally we can solve the puzzle
     let mut stacks1 = stacks.clone();
-    for (_, step) in steps.iter().enumerate() {
+    let mut stacks2 = stacks.clone();
+
+    for (_, step) in steps.enumerate() {
         // Part 1: take boxes off one at a time and push them onto the `to` stack
         for _ in 0..step.qty {
             let item = stacks1[step.from - 1].pop().unwrap();
             stacks1[step.to - 1].push(item);
         }
-    };
-    let answer1 = stacks1.iter().fold("".to_string(), |acc, x| format!("{}{}", acc, x.last().unwrap()));
 
-    let mut stacks2 = stacks.clone();
-    for (_, step) in steps.iter().enumerate() {
         // Part 2: take a slice off the `from` stack and append it to the `to` stack
         let stacks2_copy = stacks2.clone();
         let (remainder, slice) = stacks2_copy[step.from - 1].split_at(stacks2_copy[step.from - 1].len() - step.qty);
         stacks2[step.from - 1] = remainder.to_vec();
         stacks2[step.to - 1].extend_from_slice(slice);
     };
+    let answer1 = stacks1.iter().fold("".to_string(), |acc, x| format!("{}{}", acc, x.last().unwrap()));
     let answer2 = stacks2.iter().fold("".to_string(), |acc, x| format!("{}{}", acc, x.last().unwrap()));
     (format!("{}", answer1), format!("{}", answer2))
 }
