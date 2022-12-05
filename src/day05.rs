@@ -72,8 +72,8 @@ pub fn day05(input_lines: &str) -> (String, String) {
         }
 
         // Part 2: take a slice off the `from` stack and append it to the `to` stack
-        let stacks2_copy = stacks2.clone();
-        let (remainder, slice) = stacks2_copy[step.from - 1].split_at(stacks2_copy[step.from - 1].len() - step.qty);
+        let from_stack = stacks2[step.from - 1].clone();
+        let (remainder, slice) = from_stack.split_at(from_stack.len() - step.qty);
         stacks2[step.from - 1] = remainder.to_vec();
         stacks2[step.to - 1].extend_from_slice(slice);
     };
