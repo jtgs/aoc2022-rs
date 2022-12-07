@@ -66,9 +66,10 @@ pub fn day07(input_lines: &str) -> (String, String) {
         v.size <= 100000 && !v.children.is_empty()
     }).map(|(_, v)| v.size).sum();
 
-    let target: i64 = 70000000;
+    let total: i64 = 70000000;
+    let target: i64 = 30000000;
     let starting = dir_list["/"].size;
-    let gap = target - starting;
+    let gap = target - (total - starting);
 
     println!("/ is {} so need {}", starting, gap);
 
