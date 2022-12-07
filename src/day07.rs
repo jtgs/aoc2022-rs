@@ -59,13 +59,21 @@ pub fn day07(input_lines: &str) -> (String, String) {
     // Debug: print it out
     for (key, val) in dir_list.iter() {
         println!("{}, size {}", key, val.size);
-        println!("children: {:?}", val.children);
+        // println!("children: {:?}", val.children);
     }
 
     let answer1: i64 = dir_list.iter().filter(|(_, v)| {
         v.size <= 100000 && !v.children.is_empty()
     }).map(|(_, v)| v.size).sum();
-    let answer2 = 0;
+
+    let target: i64 = 70000000;
+    let starting = dir_list["/"].size;
+    let gap = target - starting;
+
+    println!("/ is {} so need {}", starting, gap);
+
+    let answer2 = dir_list.iter().map(|(_, v)| v.size).filter(|x| *x > gap).min().unwrap();
+
     (format!("{}", answer1), format!("{}", answer2))
 }
 
@@ -104,11 +112,11 @@ $ ls
 
     #[test]
     fn check_day07_part2_case1() {
-        assert_eq!(day07("").1, "0".to_string())
+        assert_eq!(day07(TEST_INPUT).1, "24933642".to_string())
     }
 
     #[test]
     fn check_day07_both_case1() {
-        assert_eq!(day07(""), ("0".to_string(), "0".to_string()))
+        assert_eq!(day07(TEST_INPUT), ("95437".to_string(), "24933642".to_string()))
     }
 }
