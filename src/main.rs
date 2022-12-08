@@ -28,6 +28,8 @@ pub mod helpers;
 
 use std::env;
 
+use helpers::load_input;
+
 type DayFunction = fn(&str) -> (String, String);
 static DAY_FUNCTIONS: [DayFunction; 26] = [
     day00::day00,
@@ -84,10 +86,5 @@ fn main() {
         println!("Part 1: {}\nPart 2: {}", part1, part2);
         println!("{}.{:03}ms", elapsed / 1000, elapsed % 1000);
         println!("----------");
-    }
-
-    pub fn load_input(day: usize) -> String {
-        std::fs::read_to_string(format!("{}/{}", "inputs", day))
-            .expect("Can't open/read input file")
     }
 }
