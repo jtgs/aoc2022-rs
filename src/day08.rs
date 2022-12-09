@@ -1,10 +1,10 @@
 use crate::helpers::split_into_lines;
 
-fn visible<'a>(mut trees: impl Iterator<Item = &'a i8>, height: i8) -> (bool, i32) {
+fn visible<'a>(trees: impl Iterator<Item = &'a i8>, height: i8) -> (bool, i32) {
     let mut seen_from_edge = true;
     let mut trees_visible = 0;
 
-    while let Some(tree) = trees.next() {
+    for tree in trees {
         if *tree == -1 {
             break;
         } else if *tree < height {

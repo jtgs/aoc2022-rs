@@ -17,9 +17,9 @@ impl std::str::FromStr for Step {
         let x = s.replace("from", "to");
 
         let (q, f, t) = x
-            .strip_prefix("move ") // Remove "move" from the front
-            .and_then(|s| Some(s.split(" to "))) // Split into just the numbers
-            .and_then(|s| Some(s.collect_tuple()))
+            .strip_prefix("move ")
+            .map(|s| s.split(" to "))
+            .map(|s| s.collect_tuple())
             .unwrap()
             .unwrap();
 
@@ -58,7 +58,7 @@ pub fn day05(input_lines: &str) -> (String, String) {
 
     // Parse out the steps - use the FromStr implementation above
     let steps_raw = parts.next().unwrap();
-    let steps = steps_raw.iter().map(|s| Step::from_str(&*s).unwrap());
+    let steps = steps_raw.iter().map(|s| Step::from_str(s).unwrap());
 
     // Finally we can solve the puzzle
     let mut stacks1 = stacks.clone();
@@ -79,7 +79,7 @@ pub fn day05(input_lines: &str) -> (String, String) {
     };
     let answer1 = stacks1.iter().fold("".to_string(), |acc, x| format!("{}{}", acc, x.last().unwrap()));
     let answer2 = stacks2.iter().fold("".to_string(), |acc, x| format!("{}{}", acc, x.last().unwrap()));
-    (format!("{}", answer1), format!("{}", answer2))
+    (answer1, answer2)
 }
 
 #[cfg(test)]

@@ -39,14 +39,14 @@ pub fn day07(input_lines: &str) -> (String, String) {
                     dir_list.get_mut(prev).unwrap().size += size;
                 }
                 if first == "dir" {
-                    dir_list.insert(full_path, DirectoryNode { size: size, children: Vec::new() });
+                    dir_list.insert(full_path, DirectoryNode { size, children: Vec::new() });
                 }
             }
 
         } else if line.starts_with("$ cd") {
             let (_, target) = line.split_at(5);
             if target == ".." {
-                let (new, _) = current.rsplit_once("/").unwrap();
+                let (new, _) = current.rsplit_once('/').unwrap();
                 current = new.to_string();
                 previous.pop();
             } else {
