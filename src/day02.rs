@@ -1,11 +1,8 @@
-use crate::helpers::split_into_lines;
-
 // pub fn day02_alt(input_lines: &str) -> (String, String) {
-//     let lines = split_into_lines(input_lines);
 //     // A, X = Rock
 //     // B, Y = Paper
 //     // C, Z = Scissors
-//     let answer1: i32 = lines.iter().map(|row| match row.as_str() {
+//     let answer1: i32 = input_lines.lines().map(|row| match row.as_str() {
 //         "A X" => 4, // 1 + 3 (Rock + Draw)
 //         "A Y" => 8, // 2 + 6 (Paper + Win)
 //         "A Z" => 3, // 3 + 0 (Scissors + Lose)
@@ -21,7 +18,7 @@ use crate::helpers::split_into_lines;
 //     // X = Lose
 //     // Y = Draw
 //     // Z = Win
-//     let answer2: i32 = lines.iter().map(|row| match row.as_str() {
+//     let answer2: i32 = input_lines.lines().map(|row| match row.as_str() {
 //         "A X" => 3, // 3 + 0
 //         "A Y" => 4, // 1 + 3
 //         "A Z" => 8, // 2 + 6
@@ -99,10 +96,8 @@ fn what_to_play(tuple: &(RPS, Result)) -> RPS {
 }
 
 pub fn day02(input_lines: &str) -> (String, String) {
-    let lines = split_into_lines(input_lines);
-
-    let answer1: i32 = lines
-        .iter()
+    let answer1: i32 = input_lines
+        .lines()
         .map(|row| {
             let theirs = match row.as_bytes()[0] as char {
                 'A' => RPS::Rock,
@@ -121,8 +116,8 @@ pub fn day02(input_lines: &str) -> (String, String) {
         .map(|tuple| score_for_type(&tuple.1) + points_for_result(&play_rps(&tuple)))
         .sum();
 
-    let answer2: i32 = lines
-        .iter()
+    let answer2: i32 = input_lines
+        .lines()
         .map(|row| {
             let theirs = match row.as_bytes()[0] as char {
                 'A' => RPS::Rock,

@@ -1,8 +1,6 @@
 use std::{num::ParseIntError, str::FromStr};
 use itertools::Itertools;
 
-use crate::helpers::split_into_lines;
-
 struct Step {
     qty: usize,
     from: usize,
@@ -32,11 +30,11 @@ impl std::str::FromStr for Step {
 }
 
 pub fn day05(input_lines: &str) -> (String, String) {
-    let lines = split_into_lines(input_lines);
+    let lines: Vec<&str> = input_lines.lines().collect();
     // The two halves of the input are split by a blank line
     let mut parts = lines.split(|l| l.is_empty()).take(2);
     // First `part` is the diagram of boxes - it is most useful as a Vec<String>, order reversed (so legend is the first item)
-    let boxes: Vec<String> = parts.next().unwrap().iter().rev().map(|s| s.to_owned()).collect();
+    let boxes: Vec<&str> = parts.next().unwrap().iter().rev().map(|s| s.to_owned()).collect();
     // The legend (first item in `boxes`) tells us how many stacks we need - then create them
     let num_stacks: i32 = boxes[0].split_whitespace().last().unwrap().parse().unwrap();
     let mut stacks: Vec<Vec<char>> = vec![];

@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use crate::helpers::split_into_lines;
-
 struct DirectoryNode {
     size: i64,
     children: Vec<String>,
@@ -18,7 +16,7 @@ pub fn day07(input_lines: &str) -> (String, String) {
     let mut previous: Vec<String> = Vec::new();
 
     // Iterate through the lines, but skip the first because it's always "$ cd /"
-    for line in split_into_lines(input_lines).iter().skip(1) {
+    for line in input_lines.lines().skip(1) {
         if line == "$ls" {
             continue;
         } else if !line.starts_with('$') {

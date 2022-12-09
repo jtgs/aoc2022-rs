@@ -1,7 +1,5 @@
 use std::{str::FromStr, num::ParseIntError, collections::HashSet};
 
-use crate::helpers::split_into_lines;
-
 enum Direction {
     Up,
     Down,
@@ -83,8 +81,7 @@ fn move_rope(rope: &mut [Point], direction: &Direction) {
 }
 
 pub fn day09(input_lines: &str) -> (String, String) {
-    let rows = split_into_lines(input_lines);
-    let instructions: Vec<Instruction> = rows.iter().map(|s| Instruction::from_str(s).unwrap()).collect();
+    let instructions: Vec<Instruction> = input_lines.lines().map(|s| Instruction::from_str(s).unwrap()).collect();
 
     let mut cells_visited_a: HashSet<Point> = HashSet::new();
     let mut cells_visited_b: HashSet<Point> = HashSet::new();

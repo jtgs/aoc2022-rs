@@ -1,10 +1,7 @@
 use std::cmp::{max, min};
 
-use crate::helpers::split_into_lines;
-
 pub fn day04(input_lines: &str) -> (String, String) {
-    let pairs = split_into_lines(input_lines);
-    let parsed: Vec<Vec<(i32, i32)>> = pairs.iter().map(|p| {
+    let parsed: Vec<Vec<(i32, i32)>> = input_lines.lines().map(|p| {
         let elves = p.split(',');
         elves.map(|e| {
             let range_ends: Vec<&str> = e.split('-').collect();

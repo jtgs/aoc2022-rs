@@ -1,8 +1,6 @@
-use crate::helpers::split_into_lines;
-
 pub fn day01(input_lines: &str) -> (String, String) {
     // Split by double line break to get the elves' entries
-    let lines = split_into_lines(input_lines);
+    let lines: Vec<&str> = input_lines.lines().collect();
     let elves = lines.split(|l| l.is_empty());
     // Sum up each elf's individual total
     let mut elf_totals: Vec<i32> = elves.map(|e| e.iter().map(|x| x.trim().parse::<i32>().unwrap()).sum()).collect();

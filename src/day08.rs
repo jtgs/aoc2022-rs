@@ -1,5 +1,3 @@
-use crate::helpers::split_into_lines;
-
 fn visible<'a>(trees: impl Iterator<Item = &'a i8>, height: i8) -> (bool, i32) {
     let mut seen_from_edge = true;
     let mut trees_visible = 0;
@@ -20,12 +18,10 @@ fn visible<'a>(trees: impl Iterator<Item = &'a i8>, height: i8) -> (bool, i32) {
 }
 
 pub fn day08(input_lines: &str) -> (String, String) {
-    let rows = split_into_lines(input_lines);
-
     const SIZE: usize = 99;
     let mut grid = [[-1_i8; SIZE]; SIZE];
 
-    for (y, line) in rows.iter().enumerate() {
+    for (y, line) in input_lines.lines().enumerate() {
         for (x, cell) in line.chars().enumerate() {
             grid[x][y] = cell.to_digit(10).unwrap() as i8;
         }

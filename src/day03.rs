@@ -1,7 +1,5 @@
 use std::collections::HashSet;
 
-use crate::helpers::split_into_lines;
-
 fn priority_for_char(c: &char) -> i32 {
     match *c {
         'a'..='z' => *c as i32 - 96,
@@ -11,7 +9,7 @@ fn priority_for_char(c: &char) -> i32 {
 }
 
 pub fn day03(input_lines: &str) -> (String, String) {
-    let rucksacks = split_into_lines(input_lines);
+    let rucksacks: Vec<&str> = input_lines.lines().collect();
 
     let answer1: i32 = rucksacks.iter().map(|r| {
         let mut chars: Vec<char> = r.chars().collect();
