@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'advent_of_code_template'",
+            "name": "Debug executable 'aoc2022-rs-jtgs'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=advent_of_code_template",
-                    "--package=advent_of_code_template"
+                    "--bin=aoc2022-rs-jtgs",
+                    "--package=aoc2022-rs-jtgs"
                 ],
                 "filter": {
-                    "name": "advent_of_code_template",
+                    "name": "aoc2022-rs-jtgs",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'advent_of_code_template'",
+            "name": "Debug unit tests in executable 'aoc2022-rs-jtgs'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=advent_of_code_template",
-                    "--package=advent_of_code_template"
+                    "--bin=aoc2022-rs-jtgs",
+                    "--package=aoc2022-rs-jtgs"
                 ],
                 "filter": {
-                    "name": "advent_of_code_template",
+                    "name": "aoc2022-rs-jtgs",
                     "kind": "bin"
                 }
             },
