@@ -60,7 +60,6 @@ fn main(grid: &Grid, start: &Point, end: &Point, part_two: bool) -> usize {
     steps
 }
 
-
 pub fn day12(input_lines: &str) -> (String, String) {
     let mut grid: Grid = Vec::new();
     let mut start = (0, 0);

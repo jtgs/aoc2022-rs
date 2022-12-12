@@ -44,8 +44,8 @@ pub fn day05(input_lines: &str) -> (String, String) {
 
     // Parse the stacks - look at the (4j + 1)th character in each row for the box in stack `j`, if any
     // Our stacks are ordered such that the 'bottom' is the start of the Vec
-    for i in 1..boxes.len() {
-        let row_chars:Vec<char> = boxes[i].chars().collect();
+    for b in boxes.iter().skip(1) {
+        let row_chars:Vec<char> = b.chars().collect();
         for j in 0..stacks.len() {
             let char = row_chars[(4 * j) + 1];
             if char != ' ' {
