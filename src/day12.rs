@@ -13,10 +13,8 @@ fn try_to_step(
     let old_val = grid[current_point.1][current_point.0];
     let new_val = grid[new_point.1][new_point.0];
 
-    if -new_val + old_val <= 1 {
-        if visited_squares.insert(new_point) {
-            queue.push_back(new_point);
-        }
+    if -new_val + old_val <= 1 && visited_squares.insert(new_point) {
+        queue.push_back(new_point);
     }
 }
 
@@ -37,19 +35,19 @@ fn main(grid: &Grid, start: &Point, end: &Point, part_two: bool) -> usize {
             }
 
             if x > 0 { // try to step left
-                try_to_step(&grid, &mut queue, &mut visited_squares, (x, y), (x - 1, y));
+                try_to_step(grid, &mut queue, &mut visited_squares, (x, y), (x - 1, y));
             }
             
             if x + 1 < grid[0].len() { // try to step right
-                try_to_step(&grid, &mut queue, &mut visited_squares, (x, y), (x + 1, y));
+                try_to_step(grid, &mut queue, &mut visited_squares, (x, y), (x + 1, y));
             }
             
             if y > 0 { // try to step up
-                try_to_step(&grid, &mut queue, &mut visited_squares, (x, y), (x, y - 1));
+                try_to_step(grid, &mut queue, &mut visited_squares, (x, y), (x, y - 1));
             }
             
             if y + 1 < grid.len() { // try to step down
-                try_to_step(&grid, &mut queue, &mut visited_squares, (x, y), (x, y + 1));
+                try_to_step(grid, &mut queue, &mut visited_squares, (x, y), (x, y + 1));
             }
         }
         steps += 1;

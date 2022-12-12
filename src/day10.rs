@@ -79,7 +79,7 @@ pub fn day10(input_lines: &str) -> (String, String) {
 
     let answer1 = signal_strengths;
     let answer2 = crt;
-    (format!("{}", answer1), format!("{}", answer2))
+    (format!("{}", answer1), answer2)
 }
 
 #[cfg(test)]

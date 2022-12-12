@@ -83,7 +83,7 @@ pub fn day11(input_lines: &str) -> (String, String) {
     monkeys_1.sort_by(|m, n| m.items_inspected.cmp(&n.items_inspected));
     let answer1 = monkeys_1.iter().rev().take(2).fold(1, |acc, m| acc * m.items_inspected);
 
-    let mut monkeys_2 = monkeys.clone();
+    let mut monkeys_2 = monkeys;
     let divisor = monkeys_2.iter().fold(1, |acc, m| acc * m.test_divisor);
     for _ in 1..=10000 {
         for m in 0..monkeys_2.len() {
