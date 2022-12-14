@@ -42,7 +42,7 @@ fn let_sand_fall(sand_source: &Point, obstacles: &HashSet<Point>, bottom: i32, h
     let mut curr = sand_source.clone();
 
     let blocked = |next: &Point| {
-        obstacles.contains(&next) || (next.1 == bottom && hard_bottom)
+        obstacles.contains(next) || (next.1 == bottom && hard_bottom)
     };
 
     'outer: 
@@ -74,17 +74,16 @@ pub fn day14(input_lines: &str) -> (String, String) {
     let sand_source = Point(500, 0);
 
     // list of points that are in a wall
-    let wall_points: HashSet<Point> = walls.iter().flat_map(|w| list_of_points_in_wall(w)).collect();
+    let wall_points: HashSet<Point> = walls.iter().flat_map(list_of_points_in_wall).collect();
 
     // where is the bottommost wall?
     let bottom = wall_points.iter().map(|p| p.1).max().unwrap();
 
     // Part 1: no floor
     let mut obstacles_1 = wall_points.clone().into_iter().collect();
-    loop {
-        match let_sand_fall(&sand_source, &obstacles_1, bottom, false) {
-            Some(p) => if !obstacles_1.insert(p) { panic!("double stacking!") },
-            None => break,
+    while let Some(p) = let_sand_fall(&sand_source, &obstacles_1, bottom, false) {
+        if !obstacles_1.insert(p) { 
+            panic!("double stacking!") 
         }
     }
     println!("Answer 1 is {}", obstacles_1.len() - wall_points.len());
