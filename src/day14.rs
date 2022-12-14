@@ -38,15 +38,12 @@ fn list_of_points_in_wall(wall: &Vec<Point>) -> Vec<Point> {
     wall_points
 }
 
-fn let_sand_fall(sand_source: &Point, wall_points: &Vec<Point>, sand_locs: &Vec<Point>, bottom: i32) -> Option<Point> {
+fn let_sand_fall(sand_source: &Point, wall_points: &Vec<Point>, sand_locs: &HashSet<Point>, bottom: i32) -> Option<Point> {
     let mut curr = sand_source.clone();
     let mut obstacles: HashSet<&Point> = wall_points.iter().collect();
     sand_locs.iter().for_each(|l| {obstacles.insert(l);});
 
     loop {
-        // fall one unit
-        curr.1 += 1;
-
         // Have we fallen off the edge?
         if curr.1 >= bottom {
             return None
@@ -54,17 +51,20 @@ fn let_sand_fall(sand_source: &Point, wall_points: &Vec<Point>, sand_locs: &Vec<
 
         // check below
         if !obstacles.contains(&Point(curr.0, curr.1 + 1)) {
+            curr.1 += 1;
             continue;
         }
 
         // check left
         if !obstacles.contains(&Point(curr.0 - 1, curr.1 + 1)) {
+            curr.1 += 1;
             curr.0 -= 1;
             continue;
         }
 
         // check right
         if !obstacles.contains(&Point(curr.0 + 1, curr.1 + 1)) {
+            curr.1 += 1;
             curr.0 += 1;
             continue;
         }
@@ -72,8 +72,26 @@ fn let_sand_fall(sand_source: &Point, wall_points: &Vec<Point>, sand_locs: &Vec<
         // must come to rest
         break;
     }
-
+    // println!("{:?}", curr);
     Some(curr)
+}
+
+fn draw_it(wall_points: &Vec<Point>, sand_locs: &HashSet<Point>, left: i32, right: i32, height: i32) {
+    for y in 0..=height {
+        let mut line: Vec<&str> = Vec::new();
+
+        for x in left..=right {
+            if wall_points.contains(&Point(x, y)) {
+                line.push("#");
+            } else if sand_locs.contains(&Point(x, y)) {
+                line.push("O");
+            } else {
+                line.push(".");
+            }
+        }
+
+        println!("{}", line.join(""));
+    }
 }
 
 pub fn day14(input_lines: &str) -> (String, String) {
@@ -86,7 +104,7 @@ pub fn day14(input_lines: &str) -> (String, String) {
     let wall_points: Vec<Point> = walls.iter().flat_map(|w| list_of_points_in_wall(w)).collect();
 
     // list of points that have sand in them
-    let mut sand_locs: Vec<Point> = Vec::new();
+    let mut sand_locs = HashSet::new();
 
     // where is the bottommost wall?
     let bottom = wall_points.iter().map(|p| p.1).max().unwrap();
@@ -94,14 +112,35 @@ pub fn day14(input_lines: &str) -> (String, String) {
     // Part 1: no floor
     loop {
         match let_sand_fall(&sand_source, &wall_points, &sand_locs, bottom) {
-            Some(p) => sand_locs.push(p),
+            Some(p) => if !sand_locs.insert(p) { panic!("double stacking!") },
             None => break,
         }
     }
+    println!("Answer 1 is {}", sand_locs.len());
     let answer1 = sand_locs.len();
 
+    // Part 2: floor is 2 below the lowest wall
+    let new_bottom = bottom + 2;
+    let left = wall_points.iter().map(|p| p.0).min().unwrap();
+    let right = wall_points.iter().map(|p| p.0).max().unwrap();
+    let mut new_wall = list_of_points_in_wall(&vec!(Point(left - 1000, new_bottom), Point(right + 1000, new_bottom)));
+    let mut new_wall_points = wall_points.clone();
+    new_wall_points.append(&mut new_wall);
+    let mut sand_locs_2 = HashSet::new();
 
-    let answer2 = 0;
+    loop {
+        match let_sand_fall(&sand_source, &new_wall_points, &sand_locs_2, new_bottom) {
+            Some(Point(500, 0)) => { sand_locs_2.insert(Point(500, 0)); break; },
+            Some(p) => { 
+                if !sand_locs_2.insert(p) { panic!("double stacking!") }
+                println!("{}", sand_locs_2.len());
+            },
+            None => panic!("ran out of bottom!"), 
+        }
+    }
+
+    draw_it(&new_wall_points, &sand_locs_2, left - 10, right + 10, new_bottom);
+    let answer2 = sand_locs_2.len();
     (format!("{}", answer1), format!("{}", answer2))
 }
 
@@ -119,11 +158,11 @@ mod tests {
 
     #[test]
     fn check_day14_part2_case1() {
-        assert_eq!(day14(TEST_INPUT).1, "0".to_string())
+        assert_eq!(day14(TEST_INPUT).1, "93".to_string())
     }
 
     #[test]
     fn check_day14_both_case1() {
-        assert_eq!(day14(TEST_INPUT), ("0".to_string(), "0".to_string()))
+        assert_eq!(day14(TEST_INPUT), ("24".to_string(), "93".to_string()))
     }
 }
