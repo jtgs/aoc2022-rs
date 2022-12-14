@@ -86,7 +86,6 @@ pub fn day14(input_lines: &str) -> (String, String) {
             panic!("double stacking!") 
         }
     }
-    println!("Answer 1 is {}", obstacles_1.len() - wall_points.len());
     let answer1 = obstacles_1.len() - wall_points.len();
 
     // Part 2: floor is 2 below the lowest wall
