@@ -38,60 +38,33 @@ fn list_of_points_in_wall(wall: &Vec<Point>) -> Vec<Point> {
     wall_points
 }
 
-fn let_sand_fall(sand_source: &Point, wall_points: &Vec<Point>, sand_locs: &HashSet<Point>, bottom: i32) -> Option<Point> {
+fn let_sand_fall(sand_source: &Point, obstacles: &HashSet<Point>, bottom: i32, hard_bottom: bool) -> Option<Point> {
     let mut curr = sand_source.clone();
-    let mut obstacles: HashSet<&Point> = wall_points.iter().collect();
-    sand_locs.iter().for_each(|l| {obstacles.insert(l);});
 
+    let blocked = |next: &Point| {
+        obstacles.contains(&next) || (next.1 == bottom && hard_bottom)
+    };
+
+    'outer: 
     loop {
         // Have we fallen off the edge?
         if curr.1 >= bottom {
             return None
         }
 
-        // check below
-        if !obstacles.contains(&Point(curr.0, curr.1 + 1)) {
-            curr.1 += 1;
-            continue;
-        }
-
-        // check left
-        if !obstacles.contains(&Point(curr.0 - 1, curr.1 + 1)) {
-            curr.1 += 1;
-            curr.0 -= 1;
-            continue;
-        }
-
-        // check right
-        if !obstacles.contains(&Point(curr.0 + 1, curr.1 + 1)) {
-            curr.1 += 1;
-            curr.0 += 1;
-            continue;
+        // check below, left, right
+        for p in [Point(curr.0, curr.1 + 1), Point(curr.0 - 1, curr.1 + 1), Point(curr.0 + 1, curr.1 + 1)] {
+            if !blocked(&p) {
+                curr = p;
+                continue 'outer;
+            }
         }
 
         // must come to rest
         break;
     }
-    // println!("{:?}", curr);
+
     Some(curr)
-}
-
-fn draw_it(wall_points: &Vec<Point>, sand_locs: &HashSet<Point>, left: i32, right: i32, height: i32) {
-    for y in 0..=height {
-        let mut line: Vec<&str> = Vec::new();
-
-        for x in left..=right {
-            if wall_points.contains(&Point(x, y)) {
-                line.push("#");
-            } else if sand_locs.contains(&Point(x, y)) {
-                line.push("O");
-            } else {
-                line.push(".");
-            }
-        }
-
-        println!("{}", line.join(""));
-    }
 }
 
 pub fn day14(input_lines: &str) -> (String, String) {
@@ -101,46 +74,37 @@ pub fn day14(input_lines: &str) -> (String, String) {
     let sand_source = Point(500, 0);
 
     // list of points that are in a wall
-    let wall_points: Vec<Point> = walls.iter().flat_map(|w| list_of_points_in_wall(w)).collect();
-
-    // list of points that have sand in them
-    let mut sand_locs = HashSet::new();
+    let wall_points: HashSet<Point> = walls.iter().flat_map(|w| list_of_points_in_wall(w)).collect();
 
     // where is the bottommost wall?
     let bottom = wall_points.iter().map(|p| p.1).max().unwrap();
 
     // Part 1: no floor
+    let mut obstacles_1 = wall_points.clone().into_iter().collect();
     loop {
-        match let_sand_fall(&sand_source, &wall_points, &sand_locs, bottom) {
-            Some(p) => if !sand_locs.insert(p) { panic!("double stacking!") },
+        match let_sand_fall(&sand_source, &obstacles_1, bottom, false) {
+            Some(p) => if !obstacles_1.insert(p) { panic!("double stacking!") },
             None => break,
         }
     }
-    println!("Answer 1 is {}", sand_locs.len());
-    let answer1 = sand_locs.len();
+    println!("Answer 1 is {}", obstacles_1.len() - wall_points.len());
+    let answer1 = obstacles_1.len() - wall_points.len();
 
     // Part 2: floor is 2 below the lowest wall
     let new_bottom = bottom + 2;
-    let left = wall_points.iter().map(|p| p.0).min().unwrap();
-    let right = wall_points.iter().map(|p| p.0).max().unwrap();
-    let mut new_wall = list_of_points_in_wall(&vec!(Point(left - 1000, new_bottom), Point(right + 1000, new_bottom)));
-    let mut new_wall_points = wall_points.clone();
-    new_wall_points.append(&mut new_wall);
-    let mut sand_locs_2 = HashSet::new();
+    let mut obstacles_2 = wall_points.clone().into_iter().collect();
 
     loop {
-        match let_sand_fall(&sand_source, &new_wall_points, &sand_locs_2, new_bottom) {
-            Some(Point(500, 0)) => { sand_locs_2.insert(Point(500, 0)); break; },
+        match let_sand_fall(&sand_source, &obstacles_2, new_bottom, true) {
+            Some(Point(500, 0)) => { obstacles_2.insert(Point(500, 0)); break; },
             Some(p) => { 
-                if !sand_locs_2.insert(p) { panic!("double stacking!") }
-                println!("{}", sand_locs_2.len());
+                if !obstacles_2.insert(p) { panic!("double stacking!") }
             },
             None => panic!("ran out of bottom!"), 
         }
     }
 
-    draw_it(&new_wall_points, &sand_locs_2, left - 10, right + 10, new_bottom);
-    let answer2 = sand_locs_2.len();
+    let answer2 = obstacles_2.len() - wall_points.len();
     (format!("{}", answer1), format!("{}", answer2))
 }
 
