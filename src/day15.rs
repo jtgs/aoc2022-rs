@@ -12,13 +12,28 @@ struct Sensor {
     distance: i32,
 }
 
-fn manhattan_distance(a: &Point, b: &Point) -> i32 {
-    i32::abs(a.0 - b.0) + i32::abs(a.1 - b.1)
+impl Sensor {
+    fn is_within_range(&self, point: &Point) -> bool {
+        let separation = manhattan_distance(&self.location, point);
+        separation <= self.distance
+    }
+
+    fn circle_outside(&self) -> Vec<Point> {
+        let mut circle = Vec::new();
+        let radius = self.distance + 1;
+        for i in 0..radius {
+            circle.push(Point(self.location.0 - radius + i, self.location.1 + i)); // top left
+            circle.push(Point(self.location.0 + i, self.location.1 + radius - i)); // bottom left
+            circle.push(Point(self.location.0 + radius - i, self.location.1 - i)); // top right
+            circle.push(Point(self.location.0 - i, self.location.1 - (radius - i))); // bottom right
+        }
+
+        circle
+    }
 }
 
-fn is_within_range(sensor: &Sensor, point: &Point) -> bool {
-    let separation = manhattan_distance(&sensor.location, point);
-    separation <= sensor.distance
+fn manhattan_distance(a: &Point, b: &Point) -> i32 {
+    i32::abs(a.0 - b.0) + i32::abs(a.1 - b.1)
 }
 
 impl FromStr for Sensor {
@@ -58,7 +73,7 @@ fn day15_inner(input_lines: &str, target_y: i32) -> (String, String) {
     for x in minimum_x..=maximum_x {
         let mut in_range = false;
         for sensor in &sensors {
-            if is_within_range(&sensor, &Point(x, target_y)) {
+            if sensor.is_within_range(&Point(x, target_y)) {
                 in_range = true;
                 break;
             }
@@ -72,8 +87,40 @@ fn day15_inner(input_lines: &str, target_y: i32) -> (String, String) {
     impossible_points_count -= sensors.iter().map(|s| s.closest).filter(|p| p.1 == target_y).collect::<HashSet<Point>>().len();
 
     let answer1 = impossible_points_count;
+
+    // Part 2
+    let max_dimension = target_y * 2;
+    let mut distress_beacon = Point(1,1);
+    let mut sensors_ordered = sensors.iter().collect::<Vec<_>>();
+    sensors_ordered.sort_by(|a, b| a.distance.cmp(&b.distance));
+
+    let mut points = HashSet::<Point>::new();
+
+    for sensor in sensors_ordered {
+        let circle = sensor.circle_outside();
+        circle.iter().for_each(|p| {points.insert(*p); }); //.filter(|p| p.0 >= 0 && p.0 <= max_dimension && p.1 >= 0 && p.1 <= max_dimension)
+    }
+
+    for point in points.iter() {
+        if point.0 < 0 || point.0 > max_dimension || point.1 < 0 || point.1 > max_dimension {
+            continue;
+        }
+        let mut possible = true;
+        for sensor in &sensors {
+            if sensor.is_within_range(point) {
+                possible = false;
+                break;
+            }
+        }
+
+        if possible {
+            distress_beacon = point.clone();
+            break;
+        }
+    }
     
-    let answer2 = 0;
+    let answer2 = distress_beacon.0 as i64 * 4_000_000_i64 + distress_beacon.1 as i64;
+
     (format!("{}", answer1), format!("{}", answer2))
 }
 
