@@ -11,6 +11,7 @@ struct Valve {
 
 // entry = destination -> distance
 type PathSet = HashMap<String, i32>;
+// entry = source -> PathSet
 type PathSetMap = HashMap<String, PathSet>;
 // entry = name -> Valve struct
 type ValveSet = HashMap<String, Valve>;
@@ -67,6 +68,35 @@ fn recurse(valves: &ValveSet, paths: &PathSetMap, opened: &Vec<String>, from: &s
     return new_best;
 }
 
+fn recurse_with_elephant(valves: &ValveSet, paths: &PathSetMap, opened: &Vec<String>, from: &str, total_released: i32, time_left: i32, best_total: i32, elephant: bool) -> i32 {
+    let valve = valves.get(from).unwrap();
+    let mut new_best = best_total;
+
+    if total_released > best_total {
+        new_best = total_released;
+    }
+
+    if time_left <= 0 {
+        return new_best
+    }
+
+    if !opened.contains(&from.to_owned()) {
+        let mut new_opened = opened.clone();
+        new_opened.push(from.to_owned());
+        let new_total = total_released + (valve.flow_rate * time_left);
+        new_best = recurse_with_elephant(valves, paths, &new_opened, from, new_total, time_left - 1, new_best, elephant);
+        if !elephant {
+            new_best = recurse_with_elephant(valves, paths, &new_opened, "AA", new_total, 25, new_best, true);
+        }
+    } else {
+        for (next, cost) in paths.get(from).unwrap().iter().filter(|(k, _)| !opened.contains(k)) {
+            new_best = recurse_with_elephant(valves, paths, opened, next, total_released, time_left - cost, new_best, elephant);
+        }
+    }
+
+    return new_best;
+}
+
 pub fn day16(input_lines: &str) -> (String, String) {
     let valves: ValveSet = input_lines.lines().map(|s| {
         lazy_static! {
@@ -80,6 +110,7 @@ pub fn day16(input_lines: &str) -> (String, String) {
 
         (name, Valve { flow_rate, neighbours })
     }).collect();
+    println!("Parsed input");
 
     let mut keys: Vec<String> = valves.keys().filter(|k| valves.get(*k).unwrap().flow_rate != 0).map(|s| s.to_owned()).collect();
     keys.push("AA".to_string());
@@ -93,10 +124,12 @@ pub fn day16(input_lines: &str) -> (String, String) {
             }
         }
     }
+    println!("Worked out paths");
 
     let answer1 = recurse(&valves, &paths, vec!["AA".to_owned()].as_ref(), "AA", 0, 29, 0);
+    println!("Solved part 1");
 
-    let answer2 = 0;
+    let answer2 = recurse_with_elephant(&valves, &paths, vec!["AA".to_owned()].as_ref(), "AA", 0, 25, 0, false);
     (format!("{}", answer1), format!("{}", answer2))
 }
 
@@ -122,11 +155,11 @@ Valve JJ has flow rate=21; tunnel leads to valve II";
 
     #[test]
     fn check_day16_part2_case1() {
-        assert_eq!(day16(TEST_INPUT).1, "0".to_string())
+        assert_eq!(day16(TEST_INPUT).1, "1707".to_string())
     }
 
     #[test]
     fn check_day16_both_case1() {
-        assert_eq!(day16(TEST_INPUT), ("0".to_string(), "0".to_string()))
+        assert_eq!(day16(TEST_INPUT), ("1651".to_string(), "1707".to_string()))
     }
 }
